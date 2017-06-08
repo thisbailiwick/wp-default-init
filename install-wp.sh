@@ -3,6 +3,13 @@
 # Requires
 # wp-cli http://wp-cli.org/
 # composer https://getcomposer.org - composer calls below may need to be altered if composer is intalled globablly or not. This is using a global install.
+# bower
+# npm
+# node
+
+# commandline args are $1: theme name $2: db tables prefix $3: devUrl
+
+# TODO: check if node, npm, bower, gulp installed
 
 
 # Create a db
@@ -28,6 +35,14 @@ else
 fi
 echo "$1"
 echo "${THEMENAME}"
+
+# if dev url arg not set then make it the themename
+if [ -z "$3" ]
+then
+  DEVURL=${1//[^a-zA-Z0-9]/-}
+else
+  DEVURL=${3//[^a-zA-Z0-9]/-}
+fi
 
 
 # /Applications/MAMP/Library/bin/mysql --host=localhost -uroot -proot
@@ -115,6 +130,10 @@ cd ./web/app/themes/
 
 mv ./sage-default ./${THEMENAME}
 cd ./${THEMENAME}
+
+#change devUrl of theme
+sed -i .tmp -e s/bedrock-sage.localhost/${DEVURL}\.localhost/g ./assets/manifest.json
+
 
 npm install
 bower install
